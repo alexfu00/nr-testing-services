@@ -4,14 +4,28 @@ services:
     restart: always 
     ports:
     - 3128:3128
-  ftp-server:
-    container_name: my-ftp-server
-    environment:
-      - FTP_PASS=123
-      - FTP_USER=user
-    image: garethflowers/ftp-server
+  # ftp-server:
+  #   container_name: my-ftp-server
+  #   environment:
+  #     - FTP_PASS=123
+  #     - FTP_USER=user
+  #   image: garethflowers/ftp-server
+  #   ports:
+  #     - '20-21:20-21/tcp'
+  #     - '40000-40009:40000-40009/tcp'
+  #   volumes:
+  #     - '/data:/home/user'
+  sftp:
+    image: atmoz/sftp:latest
+    container_name: sftp
+    restart: always
+    expose:
+      - "22"
     ports:
-      - '20-21:20-21/tcp'
-      - '40000-40009:40000-40009/tcp'
+      - "22:22"
+    command:
+      - user:123:1001::data   # syntax: user:password[:e][:uid[:gid[:dir1[,dir2]...]]]
     volumes:
-      - '/data:/home/user'
+      - ./data:/home/user/data
+      - ./keys/ssh_host_rsa_key.pub:/home/user/.ssh/ssh_host_rsa_key.pub:ro
+      - ./keys/ssh_host_ed25519_key.pub:/home/user/.ssh/ssh_host_ed25519_key.pub:ro
